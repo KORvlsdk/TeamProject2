@@ -30,7 +30,6 @@ class MyApplication : MultiDexApplication() {
         }
         .build()
     val SERVER_BASE_URL : String = "http://10.100.104.53:8080/"
-    val BASE_URL = "http://apis.data.go.kr/6260000/"
     val BASE_URL2 = "https://apis.data.go.kr/6260000/RecommendedService/"
     val NAVER_MAP_URL ="https://naveropenapi.apigw.ntruss.com/"
     // 1)통신에 필요한 인스턴스를 선언 및 초기화

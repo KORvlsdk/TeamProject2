@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.my_universe.API.INetworkService
 import com.example.my_universe.ApiModel.ItemListModel77
 import com.example.my_universe.MainAdapter.MyAdapter3
+import com.example.my_universe.MyApplication
 import com.example.my_universe.databinding.FragmentHomeBinding
+import com.example.my_universe.model.RequestResultVO
+import com.example.my_universe.retrofit.ResourceServerNetwork
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,10 +25,7 @@ class HomeFragment : Fragment() {
 
     lateinit var myAdapter: MyAdapter3
     lateinit var binding: FragmentHomeBinding
-    val serviceKey2 =
-        "kg65cAU1UMyBFZ6ROiERqjqaGt2Ntxv+j96pqyIGsQ+fbnuGPuRs7ZQmr6MhZMqV/6ZmaAiKEQ5y+S0IOTO+bg=="
     var pageNum = 1
-    var numOfRows = 10
 
     private var isLoading = false
     private var isLastPage = false
@@ -42,26 +42,26 @@ class HomeFragment : Fragment() {
 
 
         val networkService =
-            (activity?.applicationContext as com.example.my_universe.MyApplication).networkService
+            (activity?.applicationContext as MyApplication).androidServer
         
 
-        val boardListCall = networkService.getMainBoardItem(serviceKey2, pageNum, numOfRows, "json")
-        boardListCall.enqueue(object : Callback<ItemListModel77> {
+        val boardListCall = networkService.requestPage(pageNum)
+        boardListCall.enqueue(object : Callback<RequestResultVO> {
             override fun onResponse(
-                call: Call<ItemListModel77>,
-                response: Response<ItemListModel77>
+                call: Call<RequestResultVO>,
+                response: Response<RequestResultVO>
             ) {
                 val boardListModel = response.body()
-                if (boardListModel != null) {
-                    Log.d("lsy", "BoardListModel 값 : ${boardListModel.getRecommendedKr.item}")
+                if (boardListModel?.boardItemDtos != null) {
+                    Log.d("lsy", "BoardListModel 값 : ${boardListModel?.boardItemDtos}")
 
                     // 어댑터에 새로운 데이터 설정
-                    boardListModel.getRecommendedKr.item?.let { myAdapter.setData(it) }
+                    boardListModel.boardItemDtos?.let { myAdapter.setData(it) }
                     binding.tabRecyclerTest1.layoutManager = LinearLayoutManager(context)
                 }
             }
 
-            override fun onFailure(call: Call<ItemListModel77>, t: Throwable) {
+            override fun onFailure(call: Call<RequestResultVO>, t: Throwable) {
                 Log.d("lsy", "데이터를 못 받아옴")
                 call.cancel()
             }
@@ -89,20 +89,20 @@ class HomeFragment : Fragment() {
 
 
 
-    private fun loadMoreItems(networkService: INetworkService) {
+    private fun loadMoreItems(networkService: ResourceServerNetwork) {
         isLoading = true
         pageNum++
 
         val boardListCall =
-            networkService.getMainBoardItem(serviceKey2, pageNum, numOfRows, "json")
-        boardListCall.enqueue(object : Callback<ItemListModel77> {
+            networkService.requestPage(pageNum)
+        boardListCall.enqueue(object : Callback<RequestResultVO> {
             override fun onResponse(
-                call: Call<ItemListModel77>,
-                response: Response<ItemListModel77>
+                call: Call<RequestResultVO>,
+                response: Response<RequestResultVO>
             ) {
                 val boardListModel = response.body()
                 if (boardListModel != null) {
-                    val newData = boardListModel.getRecommendedKr.item
+                    val newData = boardListModel.boardItemDtos
                     if (newData.isNullOrEmpty()) {
                         // 만약 불러올 페이지가 없다면 종료
                         isLastPage = true
@@ -115,7 +115,7 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<ItemListModel77>, t: Throwable) {
+            override fun onFailure(call: Call<RequestResultVO>, t: Throwable) {
                 Log.d("smh", "데이터를 못받아옴")
                 call.cancel()
                 isLoading = false

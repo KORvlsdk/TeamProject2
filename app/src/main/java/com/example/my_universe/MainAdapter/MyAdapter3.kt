@@ -7,21 +7,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.my_universe.ApiModel.ItemModel77
 import com.example.my_universe.databinding.ItemImageBinding
+import com.example.my_universe.model.BoardItemDto
 
 class MyViewHolder3(val binding: ItemImageBinding) : RecyclerView.ViewHolder(binding.root)
 
-class MyAdapter3(val context: Context, val datas: MutableList<ItemModel77>) :
+class MyAdapter3(val context: Context, val datas: MutableList<BoardItemDto>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
 
 
-    fun setData(newItems: List<ItemModel77>) {
+    fun setData(newItems: List<BoardItemDto>) {
         datas.clear()
         datas.addAll(newItems)
         notifyDataSetChanged()
     }
-    fun addData(newItems: List<ItemModel77>) {
+    fun addData(newItems: List<BoardItemDto>) {
         datas.addAll(newItems)
         notifyDataSetChanged()
     }
@@ -41,17 +42,15 @@ class MyAdapter3(val context: Context, val datas: MutableList<ItemModel77>) :
         Log.d("lsy", "onBindViewHolder : $position")
         val binding = (holder as MyViewHolder3).binding
 
-        binding.testText.text = datas[position].MAIN_TITLE
-        binding.descriptionText.text = datas[position].TITLE
-//        binding.descriptionText.text = datas[position].GUGUN_NM
+        binding.testText.text = datas[position].title
+        binding.descriptionText.text = datas[position].subTitle
 
 
 
 
 
         var imgList: MutableList<String> = mutableListOf<String>()
-        datas[position].MAIN_IMG_NORMAL?.let { imgList.add(it) }
-        datas[position].MAIN_IMG_THUMB?.let { imgList.add(it) }
+        imgList = datas[position].images.toMutableList()
         binding.tapFragSliderviewPager1.adapter = MyAdapter2(context, imgList)
     }
 }

@@ -4,11 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.my_universe.API.MyApplication
 
-import com.example.my_universe.ApiModel.ItemListModel3
 import com.example.my_universe.ApiModel.ItemListModel77
-import com.example.my_universe.MainAdapter.MyAdapter3
 import com.example.my_universe.MainAdapter.MyAdapterRetrofit77
 import com.example.my_universe.databinding.ActivityNetworkDataTestBinding
 import retrofit2.Call
